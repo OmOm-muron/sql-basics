@@ -1,0 +1,50 @@
+-- ★対象テーブルのすべての列を抽出する場合★
+-- SELECT * FROM <対象テーブル>
+SELECT * FROM employee;
+
+-- ★スキーマ指定が必要な場合★
+-- SELECT * FROM <スキーマ名>.<対象テーブル>
+-- (今回はスキーマは明示的に作成していないため、自動的に作成されているpublicスキーマを指定する)
+SELECT * FROM public.employee;
+
+-- ★抽出する列を指定する場合★
+-- 列名を','(カンマ)で連ねる
+-- SELECT <列名1>,<列名2> FROM <対象テーブル>
+SELECT employee_id, employee_name FROM employee;
+
+-- ★条件を指定する場合★
+-- SELECT <列指定>… FROM <対象テーブル> WHERE <条件を付ける列名> = <条件値>
+SELECT employee_id, employee_name FROM employee WHERE employee_id = 1;
+
+-- ★条件指定はイコール以外も使える★
+-- 指定値以下
+SELECT employee_id, employee_name FROM employee WHERE employee_id <= 2;
+-- 指定値より小さい
+SELECT employee_id, employee_name FROM employee WHERE employee_id < 2;
+-- 指定値以上
+SELECT employee_id, employee_name FROM employee WHERE employee_id >= 2;
+-- 指定値より大きい
+SELECT employee_id, employee_name FROM employee WHERE employee_id > 2;
+-- あいまい検索(文字の列を条件に指定する場合に有効)
+-- 前方一致
+SELECT employee_id, employee_name FROM employee WHERE employee_name LIKE '山田%';
+-- 後方一致
+SELECT employee_id, employee_name FROM employee WHERE employee_name LIKE '%郎';
+-- 部分一致
+SELECT employee_id, employee_name FROM employee WHERE employee_name LIKE '%藤%';
+
+-- ★複数の条件(かつ)を指定する場合★
+-- SELECT <列指定>… FROM <対象テーブル> WHERE <条件> AND <条件>
+SELECT employee_id, employee_name FROM employee WHERE employee_id < 4 AND employee_name LIKE '%一%';
+
+-- ★複数の条件(または)を指定する場合★
+-- SELECT <列指定>… FROM <対象テーブル> WHERE <条件> OR <条件>
+SELECT employee_id, employee_name FROM employee WHERE employee_id < 4 OR employee_name LIKE '%一%';
+
+-- ★並べ替え★
+-- 最後に'ORDER BY <列名>'を加える
+SELECT * FROM employee ORDER BY employee_id;
+-- 漢字での並べ替えは五十音順ではないため注意
+SELECT * FROM employee ORDER BY employee_name;
+-- デフォルトでは昇順で、降順にする場合は最後に'DESC'を加える
+SELECT * FROM employee ORDER BY employee_id DESC;

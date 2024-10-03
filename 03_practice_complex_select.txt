@@ -1,0 +1,75 @@
+-- 普通に抽出すると何のことかよく分からない
+SELECT * FROM client_pj;
+
+-- ★複数のテーブルを組み合わせて抽出★
+-- SELECT <列名>… FROM <対象テーブル1> INNER JOIN <対象テーブル2> ON <組み合わせる条件>;
+SELECT
+  client_pj.client_pj_id,
+  client_pj.client_pj_name,
+  client_pj.client_dept_id,
+  client_dept.client_dept_name,
+  client_pj.dept_id,
+  client_pj.employee_id,
+  client_pj.start_date,
+  client_pj.end_date
+FROM client_pj
+INNER JOIN client_dept ON client_dept.client_dept_id = client_pj.client_dept_id
+;
+
+-- ★3つ以上のテーブルを組み合わせる場合はINNER JOINを増やす★
+SELECT
+  client_pj.client_pj_id,
+  client_pj.client_pj_name,
+  client_pj.client_dept_id,
+  client_dept.client_dept_name,
+  client_pj.dept_id,
+  dept.dept_name,
+  client_pj.employee_id,
+  employee.employee_name,
+  client_pj.start_date,
+  client_pj.end_date
+FROM client_pj
+INNER JOIN client_dept ON client_dept.client_dept_id = client_pj.client_dept_id
+INNER JOIN dept ON dept.dept_id = client_pj.dept_id
+INNER JOIN employee ON employee.employee_id = client_pj.employee_id
+;
+
+-- ★列名を分かりやすくする★
+-- SELECT後の項目名の最後に、'AS <別名(エイリアス)>'を付ける
+SELECT
+  client_pj.client_pj_id AS プロジェクトID,
+  client_pj.client_pj_name AS プロジェクト名,
+  client_pj.client_dept_id AS 発注部署ID,
+  client_dept.client_dept_name AS 発注部署名,
+  client_pj.dept_id AS 受注部署ID,
+  dept.dept_name AS 受注部署名,
+  client_pj.employee_id AS 担当者ID,
+  employee.employee_name AS 担当者名,
+  client_pj.start_date AS 開始日,
+  client_pj.end_date AS 終了日
+FROM client_pj
+INNER JOIN client_dept ON client_dept.client_dept_id = client_pj.client_dept_id
+INNER JOIN dept ON dept.dept_id = client_pj.dept_id
+INNER JOIN employee ON employee.employee_id = client_pj.employee_id
+;
+
+-- ★抽出結果をCSV出力する★
+-- COPY (<SELECT文>) TO '<ファイルフルパス>' FORMAT csv DELIMITER ',' HEADER true ENCODING 'utf8'
+COPY (
+  SELECT
+    client_pj.client_pj_id AS プロジェクトID,
+    client_pj.client_pj_name AS プロジェクト名,
+    client_pj.client_dept_id AS 発注部署ID,
+    client_dept.client_dept_name AS 発注部署名,
+    client_pj.dept_id AS 受注部署ID,
+    dept.dept_name AS 受注部署名,
+    client_pj.employee_id AS 担当者ID,
+    employee.employee_name AS 担当者名,
+    client_pj.start_date AS 開始日,
+    client_pj.end_date AS 終了日
+  FROM client_pj
+  INNER JOIN client_dept ON client_dept.client_dept_id = client_pj.client_dept_id
+  INNER JOIN dept ON dept.dept_id = client_pj.dept_id
+  INNER JOIN employee ON employee.employee_id = client_pj.employee_id
+) TO '<適当なフォルダ>projects.csv' CSV DELIMITER ',' HEADER
+;
